@@ -18,8 +18,8 @@ from aiogram.enums import ParseMode
 
 # ================== SOZLAMALAR ==================
 BOT_TOKEN = "8238302696:AAEoQ2Bvk_g0JsL5Om4OQmboLc8ZtmY1b0c"
-ADMIN_ID = 8284924038  # O'zingizning ID raqamingizni yozing
-MAIN_CHANNEL_ID = "@sevaraakkk" # E'lonlar tushadigan kanal
+ADMIN_ID = 8284924038  # Yangi Admin ID
+MAIN_CHANNEL_ID = "@sevaraakkk" # Yangi kanal
 # ================================================
 
 # ================== BAZA SOZLAMALARI ==================
@@ -106,9 +106,14 @@ async def check_subscription(user_id):
     return unsubbed
 
 def get_main_menu():
-    kb = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="📝 E'lon berish")],
-        [KeyboardButton(text="🆘 Yordam")]
-    ], resize_keyboard=True)
+    # Chatdagi (Reply) tugmalarni rangli qilish (API 9.4)
+    kb = ReplyKeyboardMarkup(
+        keyboard=[[
+            KeyboardButton(text="📝 E'lon berish", **{"style": "primary"}), 
+            KeyboardButton(text="🆘 Yordam", **{"style": "danger"})
+        ]], 
+        resize_keyboard=True
+    )
     return kb
 
 # ================== START VA OBUNA ==================
@@ -152,11 +157,10 @@ async def start_ad(message: Message, state: FSMContext):
     user = db_query("SELECT posted_ads, paid_slots FROM users WHERE user_id=?", (message.from_user.id,), fetchone=True)
     posted, paid = user[0], user[1]
     
-    # Bepul limit: 1 ta. Agar 1 ta joylagan bo'lsa va to'lagan joyi bo'lmasa -> Pul so'raymiz
+    # Bepul limit: 1 ta.
     if posted >= (1 + paid):
         price = get_setting('price')
-        btn = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="💳 To'lov qilish", callback_data="pay_ad")]
-        ])
+        btn = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="💳 To'lov qilish", callback_data="pay_ad")]])
         await message.answer(f"Sizning bepul e'lonlar limitingiz tugagan. \n"
                              f"1-video bepul, 2-sidan boshlab pullik.\n"
                              f"E'lon narxi: {price} so'm.", reply_markup=btn)
@@ -176,7 +180,7 @@ async def pay_ad_cb(call: CallbackQuery, state: FSMContext):
 async def get_receipt(message: Message, state: FSMContext):
     photo_id = message.photo[-1].file_id
     btn = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="✅ Tasdiqlash", callback_data=f"app_pay_{message.from_user.id}"),
-         InlineKeyboardButton(text="❌ Bekor qilish", callback_data=f"rej_pay_{message.from_user.id}")]
+          InlineKeyboardButton(text="❌ Bekor qilish", callback_data=f"rej_pay_{message.from_user.id}")]
     ])
     await bot.send_photo(ADMIN_ID, photo_id, caption=f"Yangi to'lov cheki.\nFoydalanuvchi: {message.from_user.full_name} (@{message.from_user.username})\nID: {message.from_user.id}", reply_markup=btn)
     await message.answer("Chek adminga yuborildi. Tasdiqlanishini kuting.")
@@ -227,6 +231,8 @@ async def get_price(message: Message, state: FSMContext):
 @router.message(AdForm.phone)
 async def get_phone(message: Message, state: FSMContext):
     data = await state.get_data()
+    me = await bot.get_me() # Botni yuzernaymini olish uchun
+    
     text = (f"🎮 Yangi Akkaunt Sotuvda!\n\n"
             f"📊 Level: {data['level']}\n"
             f"🔫 Qurollar: {data['guns']} ta\n"
@@ -234,13 +240,16 @@ async def get_phone(message: Message, state: FSMContext):
             f"🎟 RP: {data['rp']} ta\n"
             f"🚗 Mashinalar: {data['cars']} ta\n"
             f"💰 Narxi: {data['price']} so'm\n"
-            f"📞 Tel: {message.text}\n")
+            f"📞 Tel: {message.text}\n\n"
+            f"➖➖➖➖➖➖➖➖➖➖\n"
+            f"👨‍💻 Admin: @SHIRINA_10K\n"
+            f"🤖 Botimiz: @{me.username}")
     
     ad_id = db_query("INSERT INTO ads (user_id, video_id, text) VALUES (?, ?, ?)", 
                      (message.from_user.id, data['video'], text))
     
     btn = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="✅ Tasdiqlash", callback_data=f"app_ad_{ad_id}"),
-         InlineKeyboardButton(text="❌ Bekor qilish", callback_data=f"rej_ad_{ad_id}")]
+          InlineKeyboardButton(text="❌ Bekor qilish", callback_data=f"rej_ad_{ad_id}")]
     ])
     
     await bot.send_video(ADMIN_ID, video=data['video'], caption=text + f"\n\n👤 Sotuvchi: {message.from_user.full_name} (ID: {message.from_user.id})", reply_markup=btn)
@@ -255,8 +264,7 @@ async def help_cmd(message: Message, state: FSMContext):
 
 @router.message(SupportForm.msg)
 async def send_support(message: Message, state: FSMContext):
-    btn = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="↩️ Javob yozish", callback_data=f"reply_{message.from_user.id}")]
-    ])
+    btn = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="↩️ Javob yozish", callback_data=f"reply_{message.from_user.id}")]])
     await bot.send_message(ADMIN_ID, f"📩 Yangi xabar!\nKimdan: {message.from_user.full_name} (ID: {message.from_user.id})\n\nXabar: {message.text}", reply_markup=btn)
     await message.answer("Xabaringiz adminga yetkazildi.")
     await state.clear()
@@ -281,8 +289,28 @@ async def approve_ad(call: CallbackQuery):
     ad = db_query("SELECT user_id, video_id, text FROM ads WHERE id=?", (ad_id,), fetchone=True)
     if ad:
         user_id, video_id, text = ad
-        btn = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="👤 Sotuvchi bilan aloqa", url=f"tg://user?id={user_id}")]
+        me = await bot.get_me()
+        
+        # === INLINE RANG TANLASH ===
+        styles =["primary", "danger", "success"]
+        current_style = styles[ad_id % 3] 
+        next_style = styles[(ad_id + 1) % 3] 
+        
+        btn = InlineKeyboardMarkup(inline_keyboard=[[
+                InlineKeyboardButton(
+                    text="👤 Sotuvchi bilan aloqa", 
+                    url=f"tg://user?id={user_id}",
+                    **{"style": current_style} 
+                )
+            ],[
+                InlineKeyboardButton(
+                    text="📢 Reklama berish", 
+                    url=f"https://t.me/{me.username}?start=ad",
+                    **{"style": next_style} 
+                )
+            ]
         ])
+        
         await bot.send_video(MAIN_CHANNEL_ID, video=video_id, caption=text, reply_markup=btn)
         db_query("UPDATE users SET posted_ads = posted_ads + 1 WHERE user_id=?", (user_id,))
         db_query("UPDATE ads SET status='approved' WHERE id=?", (ad_id,))
@@ -379,8 +407,7 @@ async def del_ch_step(call: CallbackQuery):
     if not channels:
         await call.message.answer("Kanallar yo'q.")
         return
-    btn = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text=f"O'chirish: {ch[1]}", callback_data=f"delch_{ch[0]}")] for ch in channels
+    btn = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text=f"O'chirish: {ch[1]}", callback_data=f"delch_{ch[0]}")] for ch in channels
     ])
     await call.message.answer("Qaysi kanalni o'chirasiz?", reply_markup=btn)
 
@@ -390,19 +417,17 @@ async def del_ch_action(call: CallbackQuery):
     db_query("DELETE FROM channels WHERE id=?", (c_id,))
     await call.message.edit_text("✅ Kanal o'chirildi.")
 
-# ================== STATISTIKA (PIL YORDAMIDA RASMLI) ==================
+# ================== STATISTIKA ==================
 def generate_stats_image():
     users = db_query("SELECT user_id, full_name, join_date, posted_ads FROM users ORDER BY posted_ads DESC", fetchall=True)
     total_users = len(users)
     
-    # Rasmni bo'yi qancha user borligiga qarab moslashadi (Max 30 ta userman ko'rsatiladi qotib qolmasligi uchun)
     show_users = users[:30]
     img_height = 150 + (len(show_users) * 35)
     
     img = Image.new('RGB', (900, img_height), color=(25, 25, 35))
     d = ImageDraw.Draw(img)
     
-    # Standard shrift
     try:
         font_title = ImageFont.truetype("arial.ttf", 24)
         font_text = ImageFont.truetype("arial.ttf", 16)
