@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PUBG Mobile Akkaunt Joylash</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Asosiy scrollbar dizayni */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1f2937; }
+        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-gray-900 text-white font-sans relative">
+
+    <!-- O'ng yuqori burchakdagi Admin Panelga kirish tugmasi (Qulf belgisi) -->
+    <div class="absolute top-4 right-4">
+        <button onclick="openAdminLogin()" class="text-gray-500 hover:text-white transition duration-200" title="Admin Panel">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+        </button>
+    </div>
+
+    <!-- ASOSIY FORMA: Foydalanuvchilar e'lon joylaydigan qism -->
+    <div class="max-w-md mx-auto mt-12 p-6 bg-gray-800 rounded-lg shadow-xl mb-10 border border-gray-700">
+        <h2 class="text-2xl font-bold text-center mb-6 text-blue-400">PUBG Akkaunt Sotish</h2>
+        
+        <form id="adForm" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium mb-1 text-gray-300">Ismingiz va Telegram Username:</label>
+                <input type="text" id="username" placeholder="@username" required class="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:border-blue-500 focus:outline-none text-white">
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium mb-1 text-gray-300">Video Havolasi (Link):</label>
+                <input type="url" id="video" placeholder="Masalan: https://t.me/kanalim/123" required class="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none text-white">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1 text-gray-300">Akkaunt Leveli:</label>
+                    <input type="number" id="level" required class="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1 text-gray-300">Qurollar soni:</label>
+                    <input type="number" id="guns" required class="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1 text-gray-300">X-Suit soni:</label>
+                    <input type="number" id="xsuits" required class="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1 text-gray-300">RP soni:</label>
+                    <input type="number" id="rp" required class="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none text-white">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1 text-gray-300">Mashinalar soni:</label>
+                    <input type="number" id="cars" required class="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1 text-gray-300">Narxi (so'mda):</label>
+                    <input type="number" id="price" required class="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none text-white">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-1 text-gray-300">Telefon raqam:</label>
+                <input type="text" id="phone" placeholder="+998901234567" required class="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none text-white">
+            </div>
+
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded transition duration-200 mt-4 shadow-lg">
+                Adminga Yuborish
+            </button>
+        </form>
+
+        <div id="successMsg" class="hidden mt-4 p-3 bg-green-600 text-center rounded text-white font-medium">
+            ✅ E'lon muvaffaqiyatli yuborildi! Admin tasdiqlashi kutilmoqda.
+        </div>
+        <div id="errorMsg" class="hidden mt-4 p-3 bg-red-600 text-center rounded text-white font-medium">
+            ❌ Xatolik! Saytga Token va Admin ID kiritilmagan. Adminga murojaat qiling.
+        </div>
+    </div>
+
+    <!-- 1. PAROL SO'RASH OYNASI (MODAL) -->
+    <div id="loginModal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+        <div class="bg-gray-800 p-6 rounded-lg shadow-2xl max-w-sm w-full border border-gray-700 transform transition-all scale-100">
+            <h3 class="text-xl mb-4 font-bold text-center text-white">🔒 Admin Panel</h3>
+            <p class="text-sm text-gray-400 mb-4 text-center">Tizimga kirish uchun parolni kiriting</p>
+            
+            <input type="password" id="adminPassword" placeholder="Parol (4321)" class="w-full p-3 mb-6 rounded bg-gray-700 border border-gray-600 focus:border-blue-500 focus:outline-none text-white text-center tracking-widest text-lg">
+            
+            <div class="flex justify-between space-x-3">
+                <button onclick="closeAdminLogin()" class="w-1/2 py-2 bg-gray-600 rounded hover:bg-gray-500 transition font-medium text-white">Bekor qilish</button>
+                <button onclick="verifyPassword()" class="w-1/2 py-2 bg-blue-600 rounded hover:bg-blue-500 transition font-medium text-white">Kirish</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. ADMIN SOZLAMALARI OYNASI (MODAL) -->
+    <div id="settingsModal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+        <div class="bg-gray-800 p-6 rounded-lg shadow-2xl max-w-md w-full border border-gray-700">
+            <h3 class="text-2xl mb-4 font-bold text-blue-400 flex items-center gap-2">
+                ⚙️ Sayt Sozlamalari
+            </h3>
+            <p class="text-sm text-gray-400 mb-6">Bu yerdagi ma'lumotlar orqali sayt Telegram botingizga ulanadi.</p>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1 text-gray-300">Telegram Bot Token:</label>
+                    <input type="text" id="botTokenInput" placeholder="123456789:ABCDefgh..." class="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:border-blue-500 focus:outline-none text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1 text-gray-300">Admin Telegram ID:</label>
+                    <input type="text" id="adminIdInput" placeholder="Masalan: 123456789" class="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:border-blue-500 focus:outline-none text-white">
+                </div>
+            </div>
+            
+            <div class="flex justify-end space-x-3 mt-8">
+                <button onclick="closeSettings()" class="px-4 py-2 bg-gray-600 rounded hover:bg-gray-500 transition text-white">Yopish</button>
+                <button onclick="saveSettings()" class="px-4 py-2 bg-green-600 rounded hover:bg-green-500 transition text-white font-bold">💾 Saqlash</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIKASI -->
+    <script>
+        // --- ADMIN PANEL LOGIKASI ---
+        function openAdminLogin() {
+            document.getElementById('loginModal').classList.remove('hidden');
+            document.getElementById('adminPassword').value = '';
+        }
+
+        function closeAdminLogin() {
+            document.getElementById('loginModal').classList.add('hidden');
+        }
+
+        function verifyPassword() {
+            let pwd = document.getElementById('adminPassword').value;
+            if (pwd === '4321') {
+                // Parol to'g'ri bo'lsa login oynasini yopib, sozlamalarni ochamiz
+                document.getElementById('loginModal').classList.add('hidden');
+                document.getElementById('settingsModal').classList.remove('hidden');
+                
+                // Oldin saqlangan token va id ni inputlarga yozib qo'yamiz
+                document.getElementById('botTokenInput').value = localStorage.getItem('site_bot_token') || '';
+                document.getElementById('adminIdInput').value = localStorage.getItem('site_admin_id') || '';
+            } else {
+                alert("❌ Parol noto'g'ri kiritildi!");
+            }
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsModal').classList.add('hidden');
+        }
+
+        function saveSettings() {
+            let token = document.getElementById('botTokenInput').value.trim();
+            let adminId = document.getElementById('adminIdInput').value.trim();
+            
+            if(!token || !adminId) {
+                alert("Iltimos, ikkala maydonni ham to'ldiring!");
+                return;
+            }
+
+            // Ma'lumotlarni brauzer xotirasiga saqlash
+            localStorage.setItem('site_bot_token', token);
+            localStorage.setItem('site_admin_id', adminId);
+            
+            alert("✅ Sozlamalar muvaffaqiyatli saqlandi!");
+            closeSettings();
+        }
+
+        // --- FORMA YUBORISH LOGIKASI ---
+        document.getElementById('adForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // LocalStorage dan Token va Admin ID ni olish
+            let botToken = localStorage.getItem('site_bot_token');
+            let adminId = localStorage.getItem('site_admin_id');
+
+            // Agar admin sozlamalarni kiritmagan bo'lsa ishlamaydi
+            if (!botToken || !adminId) {
+                document.getElementById('errorMsg').classList.remove('hidden');
+                setTimeout(() => document.getElementById('errorMsg').classList.add('hidden'), 5000);
+                return;
+            }
+
+            // Kiritilgan ma'lumotlarni yig'ib olish
+            let username = document.getElementById('username').value;
+            let video = document.getElementById('video').value;
+            let level = document.getElementById('level').value;
+            let guns = document.getElementById('guns').value;
+            let xsuits = document.getElementById('xsuits').value;
+            let rp = document.getElementById('rp').value;
+            let cars = document.getElementById('cars').value;
+            let price = document.getElementById('price').value;
+            let phone = document.getElementById('phone').value;
+
+            // Telegramga yuboriladigan Xabar ko'rinishi
+            let textMessage = `🌐 Saytdan Yangi E'lon!\n\n` +
+                              `👤 Kimdan: ${username}\n` +
+                              `🎬 Video linki: ${video}\n\n` +
+                              `📊 Level: ${level}\n` +
+                              `🔫 Qurollar: ${guns} ta\n` +
+                              `🥷 X-Suit: ${xsuits} ta\n` +
+                              `🎫 RP: ${rp} ta\n` +
+                              `🚗 Mashinalar: ${cars} ta\n` +
+                              `💵 Narxi: ${price} so'm\n` +
+                              `📞 Tel: ${phone}`;
+
+            // Tugmani bloklab qo'yamiz (ikki marta bosib yubormaslik uchun)
+            let submitBtn = e.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Yuborilmoqda...";
+
+            // Telegram API orqali so'rov yuborish
+            fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    chat_id: adminId,
+                    text: textMessage,
+                    disable_web_page_preview: true
+                })
+            }).then(response => response.json())
+              .then(data => {
+                  submitBtn.disabled = false;
+                  submitBtn.innerText = "Adminga Yuborish";
+
+                  if (data.ok) {
+                      document.getElementById('successMsg').classList.remove('hidden');
+                      document.getElementById('adForm').reset();
+                      
+                      // 5 soniyadan keyin yashil xabarni o'chirish
+                      setTimeout(() => {
+                          document.getElementById('successMsg').classList.add('hidden');
+                      }, 5000);
+                  } else {
+                      alert("❌ Telegram botda xatolik! Kiritilgan Token yoki ID noto'g'ri bo'lishi mumkin.\n\nXato: " + data.description);
+                  }
+              }).catch(err => {
+                  submitBtn.disabled = false;
+                  submitBtn.innerText = "Adminga Yuborish";
+                  alert("Tarmoqda xatolik yuz berdi. Internetni tekshiring.");
+              });
+        });
+    </script>
+</body>
+</html>
