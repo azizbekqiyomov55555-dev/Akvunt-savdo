@@ -17,9 +17,9 @@ from aiogram.filters import CommandStart, Command
 from aiogram.enums import ParseMode
 
 # ================== SOZLAMALAR ==================
-BOT_TOKEN = "SIZNING_BOT_TOKENINGIZNI_SHU_YERGA_YOZING"
-ADMIN_ID = 123456789  # O'zingizning ID raqamingizni yozing
-MAIN_CHANNEL_ID = "@sizning_asosiy_kanalingiz" # E'lonlar tushadigan kanal
+BOT_TOKEN = "8238302696:AAEoQ2Bvk_g0JsL5Om4OQmboLc8ZtmY1b0c"
+ADMIN_ID = 8537782289  # O'zingizning ID raqamingizni yozing
+MAIN_CHANNEL_ID = "@Azizbekl2026" # E'lonlar tushadigan kanal
 # ================================================
 
 # ================== BAZA SOZLAMALARI ==================
