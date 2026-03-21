@@ -7,423 +7,237 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Teko:wght@400;600;700&family=Montserrat:wght@400;600;800&display=swap');
-        
-        body { 
-            font-family: 'Montserrat', sans-serif; 
-            background-color: #050505;
-            color: #fff;
-            overflow-x: hidden;
-        }
-
-        /* --- MAXSUS ANIMATSIYALAR VA EFEKTLAR --- */
+        body { font-family: 'Montserrat', sans-serif; background-color: #050505; color: #fff; overflow-x: hidden; }
         .pubg-font { font-family: 'Teko', sans-serif; letter-spacing: 2px; }
-        
-        /* Orqa fon radar animatsiyasi */
-        .radar-bg {
-            position: fixed;
-            top: 50%; left: 50%;
-            width: 150vw; height: 150vw;
-            transform: translate(-50%, -50%);
-            background: 
-                linear-gradient(90deg, rgba(234, 179, 8, 0.03) 1px, transparent 1px) 0 0,
-                linear-gradient(rgba(234, 179, 8, 0.03) 1px, transparent 1px) 0 0;
-            background-size: 40px 40px;
-            border-radius: 50%;
-            border: 2px solid rgba(234, 179, 8, 0.1);
-            pointer-events: none;
-            z-index: -1;
-            animation: radarPulse 10s infinite linear;
-        }
-        
-        .radar-sweep {
-            position: absolute;
-            top: 50%; left: 50%;
-            width: 50%; height: 50%;
-            background: conic-gradient(from 0deg, transparent 70%, rgba(234, 179, 8, 0.4) 100%);
-            transform-origin: 0 0;
-            animation: radarSpin 4s infinite linear;
-        }
-
+        .radar-bg { position: fixed; top: 50%; left: 50%; width: 150vw; height: 150vw; transform: translate(-50%, -50%); background: linear-gradient(90deg, rgba(234, 179, 8, 0.03) 1px, transparent 1px) 0 0, linear-gradient(rgba(234, 179, 8, 0.03) 1px, transparent 1px) 0 0; background-size: 40px 40px; border-radius: 50%; pointer-events: none; z-index: -1; animation: radarPulse 10s infinite linear; }
+        .radar-sweep { position: absolute; top: 50%; left: 50%; width: 50%; height: 50%; background: conic-gradient(from 0deg, transparent 70%, rgba(234, 179, 8, 0.4) 100%); transform-origin: 0 0; animation: radarSpin 4s infinite linear; }
         @keyframes radarSpin { 100% { transform: rotate(360deg); } }
-        @keyframes radarPulse { 
-            0% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; } 
-            50% { transform: translate(-50%, -50%) scale(1.05); opacity: 0.8; } 
-            100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; } 
-        }
-
-        /* Yozuv glitch effekti */
-        .glitch:hover {
-            animation: glitch-skew 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
-            color: #fef08a;
-            text-shadow: 2px 2px #ff0000, -2px -2px #00ffff;
-        }
-
-        @keyframes glitch-skew {
-            0% { transform: skew(0deg); }
-            20% { transform: skew(-10deg); }
-            40% { transform: skew(10deg); }
-            60% { transform: skew(-5deg); }
-            80% { transform: skew(5deg); }
-            100% { transform: skew(0deg); }
-        }
-
-        /* Form elementlarining navbat bilan chiqishi */
-        .stagger-item {
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeInUp 0.6s forwards;
-        }
-        @keyframes fadeInUp {
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .stagger-item:nth-child(1) { animation-delay: 0.1s; }
-        .stagger-item:nth-child(2) { animation-delay: 0.2s; }
-        .stagger-item:nth-child(3) { animation-delay: 0.3s; }
-        .stagger-item:nth-child(4) { animation-delay: 0.4s; }
-        .stagger-item:nth-child(5) { animation-delay: 0.5s; }
-        .stagger-item:nth-child(6) { animation-delay: 0.6s; }
-
-        /* Input dizaynlari */
-        .gaming-input-wrapper {
-            position: relative;
-            background: rgba(20, 20, 20, 0.8);
-            border: 2px solid #222;
-            border-left: 4px solid #ca8a04;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            backdrop-filter: blur(5px);
-        }
-        .gaming-input-wrapper:focus-within {
-            border-color: #eab308;
-            border-left-width: 8px;
-            box-shadow: 0 0 15px rgba(234, 179, 8, 0.2), inset 0 0 10px rgba(234, 179, 8, 0.1);
-            transform: scale(1.02);
-        }
-        
-        .gaming-input {
-            width: 100%; padding: 12px 16px; background: transparent; border: none; outline: none;
-            color: #fff; font-weight: 600; font-size: 0.9rem;
-        }
-
-        /* PUBG Tugma */
-        .btn-pubg {
-            background: linear-gradient(135deg, #a16207 0%, #eab308 100%);
-            border: none;
-            text-transform: uppercase;
-            clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
-            transition: all 0.2s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .btn-pubg::after {
-            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: rgba(255,255,255,0.1); transform: rotate(45deg); transition: all 0.3s;
-        }
+        @keyframes radarPulse { 0% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; } 50% { transform: translate(-50%, -50%) scale(1.05); opacity: 0.8; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; } }
+        .gaming-input-wrapper { background: rgba(20, 20, 20, 0.8); border: 2px solid #222; border-left: 4px solid #ca8a04; transition: all 0.3s; backdrop-filter: blur(5px); }
+        .gaming-input-wrapper:focus-within { border-color: #eab308; border-left-width: 8px; box-shadow: 0 0 15px rgba(234, 179, 8, 0.2); transform: scale(1.02); }
+        .gaming-input { width: 100%; padding: 12px 16px; background: transparent; border: none; outline: none; color: #fff; font-weight: 600; font-size: 0.9rem; }
+        .btn-pubg { background: linear-gradient(135deg, #a16207 0%, #eab308 100%); border: none; text-transform: uppercase; clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px); transition: all 0.2s ease; position: relative; overflow: hidden; }
         .btn-pubg:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 20px rgba(234, 179, 8, 0.4); }
-        .btn-pubg:hover::after { left: 100%; top: 100%; }
         .btn-pubg:active { transform: translateY(2px) scale(0.98); }
-
-        /* Fayl tanlash dizayni */
-        .file-upload-wrapper {
-            border: 2px dashed #ca8a04;
-            background: rgba(234, 179, 8, 0.05);
-            transition: all 0.3s ease;
-        }
+        .file-upload-wrapper { border: 2px dashed #ca8a04; background: rgba(234, 179, 8, 0.05); transition: all 0.3s ease; }
         .file-upload-wrapper:hover { background: rgba(234, 179, 8, 0.1); border-color: #fef08a; }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #0a0a0a; }
-        ::-webkit-scrollbar-thumb { background: #eab308; }
-
-        /* Yuklanish (Loader) animatsiyasi */
-        .sniper-loader {
-            width: 30px; height: 30px; border: 3px solid #eab308; border-radius: 50%;
-            position: relative; animation: pulseLoader 1s infinite alternate;
-        }
-        .sniper-loader::before, .sniper-loader::after {
-            content: ''; position: absolute; background: #eab308;
-        }
-        .sniper-loader::before { width: 100%; height: 2px; top: 50%; left: 0; transform: translateY(-50%); }
-        .sniper-loader::after { height: 100%; width: 2px; left: 50%; top: 0; transform: translateX(-50%); }
-        
-        @keyframes pulseLoader { 0% { transform: scale(0.8); box-shadow: 0 0 0 rgba(234,179,8,0); } 100% { transform: scale(1.2); box-shadow: 0 0 15px rgba(234,179,8,0.8); } }
+        ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: #0a0a0a; } ::-webkit-scrollbar-thumb { background: #eab308; }
+        .sniper-loader { width: 24px; height: 24px; border: 3px solid #eab308; border-radius: 50%; position: relative; animation: pulseLoader 1s infinite alternate; }
+        .sniper-loader::before { content: ''; position: absolute; background: #eab308; width: 100%; height: 2px; top: 50%; left: 0; transform: translateY(-50%); }
+        .sniper-loader::after { content: ''; position: absolute; background: #eab308; height: 100%; width: 2px; left: 50%; top: 0; transform: translateX(-50%); }
+        @keyframes pulseLoader { 0% { transform: scale(0.8); } 100% { transform: scale(1.2); box-shadow: 0 0 15px rgba(234,179,8,0.8); } }
     </style>
 </head>
-<body class="min-h-screen relative flex items-center justify-center py-10">
+<body class="min-h-screen relative flex items-center justify-center py-10" onload="initPage()">
 
-    <!-- Orqa fon Radar animasiyasi -->
-    <div class="radar-bg">
-        <div class="radar-sweep"></div>
-    </div>
+    <div class="radar-bg"><div class="radar-sweep"></div></div>
 
-    <!-- Admin qulfi (O'ng burchakda) -->
+    <!-- Admin qulfi -->
     <div class="absolute top-6 right-6 z-40">
-        <button onclick="openAdminLogin()" class="play-sound text-yellow-600 hover:text-yellow-400 hover:rotate-12 transition-all duration-300 drop-shadow-[0_0_8px_rgba(234,179,8,0.5)]" title="Admin Panel">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-            </svg>
+        <button onclick="openAdminLogin()" class="play-sound text-yellow-600 hover:text-yellow-400 transition-all duration-300">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
         </button>
     </div>
 
-    <!-- ASOSIY OYNA -->
-    <div class="w-full max-w-lg mx-auto p-8 bg-[#111111]/90 backdrop-blur-md border border-gray-800 shadow-[0_0_40px_rgba(0,0,0,0.8)] relative z-10" style="clip-path: polygon(30px 0, 100% 0, 100% calc(100% - 30px), calc(100% - 30px) 100%, 0 100%, 0 30px);">
-        <div class="flex flex-col items-center mb-8">
-            <h2 class="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600 pubg-font glitch cursor-default transition-all">
-                AKKAUNT SOTISH
-            </h2>
-            <div class="w-32 h-[3px] bg-gradient-to-r from-transparent via-yellow-500 to-transparent mt-2"></div>
-        </div>
+    <!-- 1. E'LON JOYLASh BO'LIMI -->
+    <div id="adSection" class="w-full max-w-lg mx-auto p-8 bg-[#111]/90 backdrop-blur-md border border-gray-800 shadow-[0_0_40px_rgba(0,0,0,0.8)] relative z-10 hidden" style="clip-path: polygon(30px 0, 100% 0, 100% calc(100% - 30px), calc(100% - 30px) 100%, 0 100%, 0 30px);">
+        <h2 class="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600 pubg-font text-center mb-8">AKKAUNT SOTISH</h2>
         
         <form id="adForm" class="space-y-4">
+            <div class="gaming-input-wrapper"><input type="text" id="username" placeholder="👤 Telegram Username yoki Ism" required class="gaming-input"></div>
             
-            <div class="gaming-input-wrapper stagger-item">
-                <input type="text" id="username" placeholder="👤 Telegram Username yoki Ism" required class="gaming-input">
-            </div>
-            
-            <!-- VIDEO YUKLASH TUGMASI -->
-            <div class="file-upload-wrapper p-4 text-center cursor-pointer relative stagger-item group" onclick="document.getElementById('videoFile').click()">
-                <div class="text-yellow-500 mb-2 group-hover:scale-110 transition-transform">
-                    <svg class="mx-auto w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-                </div>
-                <p id="fileNameDisplay" class="text-sm font-bold text-gray-300">🎬 Obzor Videosini yuklang (Bosing)</p>
-                <p class="text-xs text-gray-500 mt-1">Max 50-100 MB</p>
-                <input type="file" id="videoFile" accept="video/*" required class="hidden" onchange="updateFileName(this)">
+            <div class="file-upload-wrapper p-4 text-center cursor-pointer group" onclick="document.getElementById('videoFile').click()">
+                <p id="fileNameDisplay" class="text-sm font-bold text-gray-300">🎬 Obzor Videosini yuklang</p>
+                <input type="file" id="videoFile" accept="video/*" required class="hidden" onchange="updateName(this, 'fileNameDisplay')">
             </div>
 
-            <div class="grid grid-cols-2 gap-4 stagger-item">
+            <div class="grid grid-cols-2 gap-4">
                 <div class="gaming-input-wrapper"><input type="number" id="level" placeholder="📊 Level" required class="gaming-input"></div>
-                <div class="gaming-input-wrapper"><input type="number" id="guns" placeholder="🔫 Qurollar soni" required class="gaming-input"></div>
-            </div>
-            
-            <div class="grid grid-cols-2 gap-4 stagger-item">
-                <div class="gaming-input-wrapper"><input type="number" id="xsuits" placeholder="🥷 X-Suit soni" required class="gaming-input"></div>
-                <div class="gaming-input-wrapper"><input type="number" id="rp" placeholder="🎫 RP soni" required class="gaming-input"></div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4 stagger-item">
+                <div class="gaming-input-wrapper"><input type="number" id="guns" placeholder="🔫 Qurollar" required class="gaming-input"></div>
+                <div class="gaming-input-wrapper"><input type="number" id="xsuits" placeholder="🥷 X-Suit" required class="gaming-input"></div>
+                <div class="gaming-input-wrapper"><input type="number" id="rp" placeholder="🎫 RP" required class="gaming-input"></div>
                 <div class="gaming-input-wrapper"><input type="number" id="cars" placeholder="🚗 Mashinalar" required class="gaming-input"></div>
                 <div class="gaming-input-wrapper"><input type="number" id="price" placeholder="💵 Narxi (so'm)" required class="gaming-input"></div>
             </div>
 
-            <div class="gaming-input-wrapper stagger-item">
-                <input type="text" id="phone" placeholder="📞 Telefon raqam (+998...)" required class="gaming-input">
-            </div>
+            <div class="gaming-input-wrapper"><input type="text" id="phone" placeholder="📞 Telefon raqam (+998...)" required class="gaming-input"></div>
 
-            <button id="submitBtn" type="submit" class="play-sound btn-pubg w-full py-4 text-black text-2xl pubg-font flex justify-center items-center gap-3 mt-6 stagger-item">
-                <span>🚀 ADMINGA YUBORISH</span>
-            </button>
+            <button id="submitBtn" type="submit" class="play-sound btn-pubg w-full py-4 text-black text-2xl pubg-font flex justify-center items-center gap-3 mt-6">🚀 ADMINGA YUBORISH</button>
+        </form>
+    </div>
+
+    <!-- 2. TO'LOV QILISH BO'LIMI (Faqat bitta e'lon bergandan keyin chiqadi) -->
+    <div id="paymentSection" class="w-full max-w-lg mx-auto p-8 bg-[#111]/90 backdrop-blur-md border border-yellow-700 shadow-[0_0_40px_rgba(234,179,8,0.2)] relative z-10 hidden" style="clip-path: polygon(30px 0, 100% 0, 100% calc(100% - 30px), calc(100% - 30px) 100%, 0 100%, 0 30px);">
+        <h2 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-yellow-600 pubg-font text-center mb-2">💳 TO'LOV QILISH</h2>
+        <p class="text-center text-gray-300 text-sm mb-2">Siz bitta bepul e'lon joylab bo'ldingiz.<br>Keyingi e'lon narxi: <strong class="text-yellow-500 text-lg" id="displayPrice">5000</strong> so'm.</p>
+        <div class="bg-black border border-yellow-600 p-3 text-center mb-6">
+            <span class="text-xs text-gray-500">KARTA RAQAM:</span><br>
+            <strong class="text-yellow-400 tracking-widest text-xl" id="displayCard">8600 0000 0000 0000</strong>
+        </div>
+
+        <form id="paymentForm" class="space-y-4">
+            <div class="gaming-input-wrapper"><input type="text" id="payUsername" placeholder="👤 Telegram Username (Masalan: @Azizbek)" required class="gaming-input"></div>
+            <div class="file-upload-wrapper p-4 text-center cursor-pointer group" onclick="document.getElementById('receiptFile').click()">
+                <p id="receiptNameDisplay" class="text-sm font-bold text-gray-300">📸 To'lov chekini rasmga olib yuklang</p>
+                <input type="file" id="receiptFile" accept="image/*" required class="hidden" onchange="updateName(this, 'receiptNameDisplay')">
+            </div>
+            <button id="payBtn" type="submit" class="play-sound btn-pubg w-full py-4 text-black text-2xl pubg-font flex justify-center items-center gap-3">🚀 CHEKNI YUBORISH</button>
         </form>
 
-        <div id="successMsg" class="hidden mt-6 p-4 bg-yellow-500/10 border-l-4 border-yellow-500 text-yellow-400 font-bold text-sm text-center animate-pulse">
-            ✅ E'lon qabul qilindi! Admin tasdiqlashi kutilmoqda.
+        <div class="mt-8 pt-6 border-t border-gray-800">
+            <p class="text-xs text-gray-400 mb-2 text-center">To'lov qildingizmi? Admin sizga RUXSAT KODIni beradi:</p>
+            <div class="flex gap-2">
+                <input type="text" id="promoCodeInput" placeholder="Kodni kiriting..." class="w-2/3 p-3 bg-black border border-gray-700 focus:border-yellow-500 outline-none text-white text-sm">
+                <button onclick="checkPromo()" class="w-1/3 play-sound bg-yellow-600 hover:bg-yellow-500 font-bold text-black transition text-sm">OCHISH</button>
+            </div>
         </div>
-        <div id="errorMsg" class="hidden mt-6 p-4 bg-red-900/50 border-l-4 border-red-500 text-red-400 font-bold text-sm text-center"></div>
     </div>
 
     <!-- ADMIN LOGIN MODAL -->
-    <div id="loginModal" class="hidden fixed inset-0 bg-black/95 backdrop-blur-md flex items-center justify-center z-50">
-        <div class="bg-[#111] p-8 max-w-sm w-full border border-yellow-600 shadow-[0_0_30px_rgba(234,179,8,0.15)] relative" style="clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);">
-            <h3 class="text-4xl mb-6 font-bold text-center text-yellow-500 pubg-font tracking-widest">🔒 KODNI KIRITING</h3>
-            
-            <div class="relative mb-8">
-                <input type="password" id="adminPassword" placeholder="Parol" class="w-full p-4 bg-black border-b-2 border-gray-700 focus:border-yellow-500 outline-none text-white text-center text-2xl font-bold tracking-[8px] transition-colors">
-                <button type="button" onclick="togglePassword()" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-yellow-500 text-xl transition-colors">👁️</button>
-            </div>
-
+    <div id="loginModal" class="hidden fixed inset-0 bg-black/95 flex items-center justify-center z-50">
+        <div class="bg-[#111] p-8 max-w-sm w-full border border-yellow-600 relative">
+            <h3 class="text-3xl mb-6 font-bold text-center text-yellow-500 pubg-font">🔒 PAROL (4321)</h3>
+            <input type="password" id="adminPassword" placeholder="Parol" class="w-full p-4 mb-6 bg-black border-b-2 border-gray-700 focus:border-yellow-500 outline-none text-white text-center text-xl font-bold tracking-[8px]">
             <div class="flex gap-4">
-                <button onclick="closeAdminLogin()" class="play-sound w-1/2 py-3 bg-gray-800 hover:bg-gray-700 font-bold text-gray-300 transition" style="clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);">YOPISH</button>
-                <button onclick="verifyPassword()" class="play-sound w-1/2 py-3 bg-yellow-600 hover:bg-yellow-500 font-bold text-black transition" style="clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);">KIRISH</button>
+                <button onclick="closeAdminLogin()" class="w-1/2 py-3 bg-gray-800 text-white font-bold">YOPISH</button>
+                <button onclick="verifyPassword()" class="w-1/2 py-3 bg-yellow-600 text-black font-bold">KIRISH</button>
             </div>
         </div>
     </div>
 
     <!-- ADMIN SOZLAMALARI -->
-    <div id="settingsModal" class="hidden fixed inset-0 bg-black/95 backdrop-blur-md flex items-center justify-center z-50">
-        <div class="bg-[#111] p-8 max-w-md w-full border border-yellow-600 relative" style="clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);">
-            <h3 class="text-4xl mb-6 font-bold text-yellow-500 pubg-font border-b border-gray-800 pb-2">⚙️ SOZLAMALAR</h3>
-            
-            <div class="space-y-6">
-                <div>
-                    <label class="block text-xs font-bold mb-2 text-yellow-600 tracking-wider">BOT TOKEN:</label>
-                    <input type="text" id="botTokenInput" placeholder="123456789:ABCDefgh..." class="w-full p-3 bg-black border border-gray-800 focus:border-yellow-500 outline-none text-white font-mono text-sm transition-colors">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold mb-2 text-yellow-600 tracking-wider">ADMIN ID:</label>
-                    <input type="text" id="adminIdInput" placeholder="Masalan: 123456789" class="w-full p-3 bg-black border border-gray-800 focus:border-yellow-500 outline-none text-white font-mono text-sm transition-colors">
-                </div>
+    <div id="settingsModal" class="hidden fixed inset-0 bg-black/95 flex items-center justify-center z-50 overflow-y-auto pt-10 pb-10">
+        <div class="bg-[#111] p-8 max-w-md w-full border border-yellow-600 relative my-auto">
+            <h3 class="text-4xl mb-4 font-bold text-yellow-500 pubg-font border-b border-gray-800 pb-2">⚙️ SOZLAMALAR</h3>
+            <div class="space-y-4">
+                <div><label class="block text-xs font-bold mb-1 text-gray-400">BOT TOKEN:</label>
+                    <input type="text" id="siteToken" class="w-full p-2 bg-black border border-gray-800 focus:border-yellow-500 outline-none text-white"></div>
+                <div><label class="block text-xs font-bold mb-1 text-gray-400">ADMIN ID:</label>
+                    <input type="text" id="siteId" class="w-full p-2 bg-black border border-gray-800 focus:border-yellow-500 outline-none text-white"></div>
+                <div><label class="block text-xs font-bold mb-1 text-yellow-500">E'LON NARXI (so'm):</label>
+                    <input type="text" id="sitePrice" placeholder="5000" class="w-full p-2 bg-black border border-gray-800 focus:border-yellow-500 outline-none text-white font-bold text-yellow-300"></div>
+                <div><label class="block text-xs font-bold mb-1 text-yellow-500">KARTA RAQAMI:</label>
+                    <input type="text" id="siteCard" placeholder="8600 1234..." class="w-full p-2 bg-black border border-gray-800 focus:border-yellow-500 outline-none text-white font-bold text-yellow-300"></div>
+                <div><label class="block text-xs font-bold mb-1 text-red-400">RUXSAT KODI (PROMO KOD):</label>
+                    <input type="text" id="sitePromo" placeholder="7777" class="w-full p-2 bg-black border border-gray-800 focus:border-yellow-500 outline-none text-white font-bold text-red-300"></div>
             </div>
-            
-            <div class="flex justify-end gap-4 mt-8">
-                <button onclick="closeSettings()" class="play-sound px-6 py-3 bg-gray-800 hover:bg-gray-700 font-bold text-gray-300 transition" style="clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);">BEKOR QILISH</button>
-                <button onclick="saveSettings()" class="play-sound px-6 py-3 bg-yellow-600 hover:bg-yellow-500 font-bold text-black transition" style="clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);">SAQLASH</button>
+            <div class="flex justify-end gap-4 mt-6">
+                <button onclick="document.getElementById('settingsModal').classList.add('hidden')" class="px-6 py-3 bg-gray-800 font-bold text-white">YOPISH</button>
+                <button onclick="saveSettings()" class="px-6 py-3 bg-yellow-600 font-bold text-black">SAQLASH</button>
             </div>
         </div>
     </div>
 
+    <!-- SCRIPT (Asosiy mantiq) -->
     <script>
-        // --- TOVUSH EFEKTLARI ---
+        // Tovushlar
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        
-        function playClickSound() {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'square';
-            osc.frequency.setValueAtTime(300, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.1);
-            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.1);
-        }
+        function playClickSound() { if(audioCtx.state==='suspended')audioCtx.resume(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.type = 'square'; osc.frequency.setValueAtTime(300, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.1); gain.gain.setValueAtTime(0.05, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1); osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + 0.1); }
+        document.querySelectorAll('.play-sound').forEach(el => el.addEventListener('click', playClickSound));
 
-        function playSuccessSound() {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(500, audioCtx.currentTime);
-            osc.frequency.setValueAtTime(1000, audioCtx.currentTime + 0.15);
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.5);
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.5);
-        }
+        // Sahifa ishga tushganda holatni tekshirish
+        function initPage() {
+            let price = localStorage.getItem('site_price') || '5000';
+            let card = localStorage.getItem('site_card') || '8600 0000 0000 0000';
+            document.getElementById('displayPrice').innerText = price;
+            document.getElementById('displayCard').innerText = card;
 
-        document.querySelectorAll('.play-sound, input, .file-upload-wrapper').forEach(el => {
-            el.addEventListener('click', playClickSound);
-        });
-
-        // --- FAYL TANLASH VA TEKSHIRISH ---
-        function updateFileName(input) {
-            let display = document.getElementById('fileNameDisplay');
-            if(input.files && input.files[0]) {
-                display.innerHTML = `<span class="text-yellow-500">✅ Fayl tanlandi:</span> ${input.files[0].name}`;
+            let adsPosted = localStorage.getItem('site_ads_posted') || '0';
+            if (adsPosted === '1') {
+                document.getElementById('adSection').classList.add('hidden');
+                document.getElementById('paymentSection').classList.remove('hidden');
             } else {
-                display.innerText = "🎬 Obzor Videosini yuklang (Bosing)";
+                document.getElementById('adSection').classList.remove('hidden');
+                document.getElementById('paymentSection').classList.add('hidden');
             }
         }
 
-        // --- PAROLNI YASHIRISH/KO'RSATISH ---
-        function togglePassword() {
-            let pwdInput = document.getElementById('adminPassword');
-            if (pwdInput.type === "password") {
-                pwdInput.type = "text";
-            } else {
-                pwdInput.type = "password";
-            }
-            playClickSound();
+        function updateName(input, labelId) {
+            let display = document.getElementById(labelId);
+            if(input.files && input.files[0]) display.innerHTML = `<span class="text-yellow-500">✅ Tanlandi:</span> ${input.files[0].name}`;
         }
 
-        // --- ADMIN PANEL LOGIKASI ---
-        function openAdminLogin() { 
-            document.getElementById('loginModal').classList.remove('hidden'); 
-            document.getElementById('adminPassword').value = ''; 
-            document.getElementById('adminPassword').type = 'password';
-        }
+        // QULF VA SOZLAMALAR
+        function openAdminLogin() { document.getElementById('loginModal').classList.remove('hidden'); document.getElementById('adminPassword').value = ''; }
         function closeAdminLogin() { document.getElementById('loginModal').classList.add('hidden'); }
-
         function verifyPassword() {
-            let pwd = document.getElementById('adminPassword').value;
-            if (pwd === '4321') {
-                document.getElementById('loginModal').classList.add('hidden');
-                document.getElementById('settingsModal').classList.remove('hidden');
-                document.getElementById('botTokenInput').value = localStorage.getItem('site_bot_token') || '';
-                document.getElementById('adminIdInput').value = localStorage.getItem('site_admin_id') || '';
-            } else {
-                alert("❌ Parol noto'g'ri!");
-            }
+            if(document.getElementById('adminPassword').value === '4321') {
+                document.getElementById('loginModal').classList.add('hidden'); document.getElementById('settingsModal').classList.remove('hidden');
+                document.getElementById('siteToken').value = localStorage.getItem('site_bot_token') || '';
+                document.getElementById('siteId').value = localStorage.getItem('site_admin_id') || '';
+                document.getElementById('sitePrice').value = localStorage.getItem('site_price') || '5000';
+                document.getElementById('siteCard').value = localStorage.getItem('site_card') || '8600 0000 0000 0000';
+                document.getElementById('sitePromo').value = localStorage.getItem('site_promo') || '7777';
+            } else alert("❌ Parol noto'g'ri!");
         }
-
-        function closeSettings() { document.getElementById('settingsModal').classList.add('hidden'); }
         function saveSettings() {
-            let token = document.getElementById('botTokenInput').value.trim();
-            let adminId = document.getElementById('adminIdInput').value.trim();
-            if(!token || !adminId) return alert("Hamma maydonlarni to'ldiring!");
-            localStorage.setItem('site_bot_token', token);
-            localStorage.setItem('site_admin_id', adminId);
-            alert("✅ Sozlamalar saqlandi!");
-            closeSettings();
+            localStorage.setItem('site_bot_token', document.getElementById('siteToken').value);
+            localStorage.setItem('site_admin_id', document.getElementById('siteId').value);
+            localStorage.setItem('site_price', document.getElementById('sitePrice').value);
+            localStorage.setItem('site_card', document.getElementById('siteCard').value);
+            localStorage.setItem('site_promo', document.getElementById('sitePromo').value);
+            alert("✅ Saqlandi!"); document.getElementById('settingsModal').classList.add('hidden'); location.reload();
         }
 
-        function showError(msg) {
-            let errBox = document.getElementById('errorMsg');
-            errBox.innerText = msg;
-            errBox.classList.remove('hidden');
-            setTimeout(() => errBox.classList.add('hidden'), 8000);
+        // RUXSAT KODINI TEKSHIRISH
+        function checkPromo() {
+            let entered = document.getElementById('promoCodeInput').value;
+            let real = localStorage.getItem('site_promo') || '7777';
+            if(entered === real) {
+                localStorage.setItem('site_ads_posted', '0'); // Qulf ochildi
+                alert("🎉 TASDIQLANDI! Qulf ochildi, e'lon joylashingiz mumkin.");
+                location.reload();
+            } else { alert("❌ Noto'g'ri kod! Admindan so'rang."); }
         }
 
-        // --- FORMA YUBORISH LOGIKASI ---
+        // 1. VIDEONI YUBORISH
         document.getElementById('adForm').addEventListener('submit', function(e) {
             e.preventDefault();
-
-            let botToken = localStorage.getItem('site_bot_token');
-            let adminId = localStorage.getItem('site_admin_id');
-
-            if (!botToken || !adminId) {
-                return showError("❌ Xatolik! Saytga Token va Admin ID kiritilmagan. O'ng tepadan qulfni bosib sozlang.");
-            }
-
-            let fileInput = document.getElementById('videoFile').files[0];
-            if (!fileInput) return showError("Iltimos videoni tanlang!");
-
-            // Maksimal 100MB limit
-            if (fileInput.size > 100 * 1024 * 1024) {
-                return showError("❌ Fayl hajmi 100 MB dan oshmasligi kerak!");
-            }
-
-            let textMessage = `🌐 Saytdan Yangi E'lon!\n\n` +
-                              `👤 Kimdan: ${document.getElementById('username').value}\n` +
-                              `📊 Level: ${document.getElementById('level').value}\n` +
-                              `🔫 Qurollar: ${document.getElementById('guns').value} ta\n` +
-                              `🥷 X-Suit: ${document.getElementById('xsuits').value} ta\n` +
-                              `🎫 RP: ${document.getElementById('rp').value} ta\n` +
-                              `🚗 Mashinalar: ${document.getElementById('cars').value} ta\n` +
-                              `💵 Narxi: ${document.getElementById('price').value} so'm\n` +
-                              `📞 Tel: ${document.getElementById('phone').value}`;
-
-            let submitBtn = document.getElementById('submitBtn');
-            let originalBtnHtml = submitBtn.innerHTML;
-            submitBtn.disabled = true;
+            let token = localStorage.getItem('site_bot_token'); let id = localStorage.getItem('site_admin_id');
+            if(!token || !id) return alert("❌ Token va Admin ID kiritilmagan!");
+            let file = document.getElementById('videoFile').files[0];
+            if(file.size > 100*1024*1024) return alert("❌ Hajm 100 MB dan oshmasin!");
             
-            submitBtn.innerHTML = `<div class="sniper-loader"></div> <span class="text-black text-xl pubg-font ml-3 tracking-widest">YUKLANMOQDA...</span>`;
+            let btn = document.getElementById('submitBtn'); let orig = btn.innerHTML;
+            btn.disabled = true; btn.innerHTML = `<div class="sniper-loader"></div> <span class="ml-2">YUKLANMOQDA...</span>`;
 
-            let formData = new FormData();
-            formData.append('chat_id', adminId);
-            formData.append('video', fileInput);
-            formData.append('caption', textMessage);
-            
-            // ADMIN GA BORADIGAN TUGMALAR
-            let replyMarkup = {
-                inline_keyboard: [[{ text: "✅ TASDIQLASH (Kanalga jo'natish)", callback_data: "web_ok" }],[{ text: "❌ BEKOR QILISH", callback_data: "web_no" }]]
-            };
-            formData.append('reply_markup', JSON.stringify(replyMarkup));
+            let fd = new FormData(); fd.append('chat_id', id); fd.append('video', file);
+            fd.append('caption', `🌐 Saytdan E'lon!\n👤 Kimdan: ${document.getElementById('username').value}\n📊 Level: ${document.getElementById('level').value}\n🔫 Qurollar: ${document.getElementById('guns').value}\n🥷 X-Suit: ${document.getElementById('xsuits').value}\n🎫 RP: ${document.getElementById('rp').value}\n🚗 Mashinalar: ${document.getElementById('cars').value}\n💵 Narx: ${document.getElementById('price').value} so'm\n📞 Tel: ${document.getElementById('phone').value}`);
+            fd.append('reply_markup', JSON.stringify({ inline_keyboard: [[{ text: "✅ TASDIQLASH (Kanalga jo'natish)", callback_data: "web_ok" }],[{ text: "❌ BEKOR QILISH", callback_data: "web_no" }]] }));
 
-            fetch(`https://api.telegram.org/bot${botToken}/sendVideo`, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalBtnHtml;
+            fetch(`https://api.telegram.org/bot${token}/sendVideo`, { method: 'POST', body: fd })
+            .then(res => res.json()).then(data => {
+                btn.disabled = false; btn.innerHTML = orig;
+                if(data.ok) {
+                    alert("✅ E'lon adminga ketdi!");
+                    localStorage.setItem('site_ads_posted', '1'); // bitta e'lon berdi deb belgilaymiz
+                    location.reload();
+                } else alert("❌ Xatolik yuz berdi: " + data.description);
+            }).catch(() => { btn.disabled = false; btn.innerHTML = orig; alert("Tarmoq xatosi!"); });
+        });
 
-                if (data.ok) {
-                    playSuccessSound(); 
-                    document.getElementById('successMsg').classList.remove('hidden');
-                    document.getElementById('adForm').reset();
-                    document.getElementById('fileNameDisplay').innerText = "🎬 Obzor Videosini yuklang (Bosing)";
-                    setTimeout(() => document.getElementById('successMsg').classList.add('hidden'), 5000);
-                } else {
-                    showError("❌ Telegram bot xatosi: " + data.description + "\nFayl hajmi telegram uchun kattalik qilgan bo'lishi mumkin.");
-                }
-            })
-            .catch(err => {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalBtnHtml;
-                showError("Tarmoqda xatolik yoki video hajmi juda katta!");
-            });
+        // 2. TO'LOV CHEKINI YUBORISH
+        document.getElementById('paymentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let token = localStorage.getItem('site_bot_token'); let id = localStorage.getItem('site_admin_id');
+            let file = document.getElementById('receiptFile').files[0]; let user = document.getElementById('payUsername').value;
+
+            let btn = document.getElementById('payBtn'); let orig = btn.innerHTML;
+            btn.disabled = true; btn.innerHTML = `<div class="sniper-loader"></div> <span class="ml-2">YUBORILMOQDA...</span>`;
+
+            let fd = new FormData(); fd.append('chat_id', id); fd.append('photo', file);
+            fd.append('caption', `💳 SAYTDAN TO'LOV CHEKI!\n\n👤 Kimdan: ${user}`);
+            fd.append('reply_markup', JSON.stringify({ inline_keyboard: [[{ text: "✅ Tasdiqlash", callback_data: "web_pay_ok" }, { text: "❌ Bekor qilish", callback_data: "web_pay_no" }]] }));
+
+            fetch(`https://api.telegram.org/bot${token}/sendPhoto`, { method: 'POST', body: fd })
+            .then(res => res.json()).then(data => {
+                btn.disabled = false; btn.innerHTML = orig;
+                if(data.ok) {
+                    alert("✅ Chekingiz Adminga yuborildi. Ular tekshirib, telegramingizga ruxsat kodini tashlab berishadi!");
+                    document.getElementById('paymentForm').reset();
+                    document.getElementById('receiptNameDisplay').innerText = "📸 To'lov chekini rasmga olib yuklang";
+                } else alert("❌ Xatolik yuz berdi.");
+            }).catch(() => { btn.disabled = false; btn.innerHTML = orig; alert("Tarmoq xatosi!"); });
         });
     </script>
 </body>
