@@ -1,1 +1,3 @@
-pip install aiogram pillow pytz
+aiogram
+pillow
+pytz
