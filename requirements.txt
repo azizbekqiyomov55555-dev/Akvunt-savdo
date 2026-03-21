@@ -1,4 +1,2 @@
-aiogram==3.7.0
-aiosqlite
-pillow
-python-dotenv
+pip install aiogram==3.7.0 aiosqlite pillow
+python pubg_bot.py
