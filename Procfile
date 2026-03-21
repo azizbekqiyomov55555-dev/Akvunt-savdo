@@ -1,1 +1,1 @@
-worker: python pubg_bot.py
+worker: python bot.py
