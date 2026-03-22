@@ -44,10 +44,7 @@
         <h2 class="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600 pubg-font text-center mb-8">AKKAUNT SOTISH</h2>
         
         <form id="adForm" class="space-y-4">
-            <div class="gaming-input-wrapper">
-                <input type="text" id="username" placeholder="👤 Telegram Username (Lichka uchun)" required class="gaming-input">
-                <p class="text-xs text-gray-400 mt-1 ml-4">Iltimos, faqat username kiriting (Masalan: Azizbek)</p>
-            </div>
+            <div class="gaming-input-wrapper"><input type="text" id="username" placeholder="👤 Telegram Username (Masalan: Azizbek)" required class="gaming-input"></div>
             
             <div class="file-upload-wrapper p-4 text-center cursor-pointer group" onclick="document.getElementById('videoFile').click()">
                 <p id="fileNameDisplay" class="text-sm font-bold text-gray-300">🎬 Obzor Videosini yuklang</p>
@@ -79,21 +76,13 @@
         </div>
 
         <form id="paymentForm" class="space-y-4">
-            <div class="gaming-input-wrapper"><input type="text" id="payUsername" placeholder="👤 Telegram Username (Masalan: Azizbek)" required class="gaming-input"></div>
+            <div class="gaming-input-wrapper"><input type="text" id="payUsername" placeholder="👤 Telegram Username (Masalan: @Azizbek)" required class="gaming-input"></div>
             <div class="file-upload-wrapper p-4 text-center cursor-pointer group" onclick="document.getElementById('receiptFile').click()">
                 <p id="receiptNameDisplay" class="text-sm font-bold text-gray-300">📸 To'lov chekini rasmga olib yuklang</p>
                 <input type="file" id="receiptFile" accept="image/*" required class="hidden" onchange="updateName(this, 'receiptNameDisplay')">
             </div>
             <button id="payBtn" type="submit" class="play-sound btn-pubg w-full py-4 text-black text-2xl pubg-font flex justify-center items-center gap-3">🚀 CHEKNI YUBORISH</button>
         </form>
-
-        <div class="mt-8 pt-6 border-t border-gray-800">
-            <p class="text-xs text-gray-400 mb-2 text-center">Admin bergan RUXSAT KODIni kiriting:</p>
-            <div class="flex gap-2">
-                <input type="text" id="promoCodeInput" placeholder="Kodni kiriting..." class="w-2/3 p-3 bg-black border border-gray-700 focus:border-yellow-500 outline-none text-white text-sm">
-                <button onclick="checkPromo()" class="w-1/3 play-sound bg-yellow-600 hover:bg-yellow-500 font-bold text-black transition text-sm">OCHISH</button>
-            </div>
-        </div>
     </div>
 
     <!-- ADMIN LOGIN MODAL -->
@@ -121,8 +110,6 @@
                     <input type="text" id="sitePrice" placeholder="5000" class="w-full p-2 bg-black border border-gray-800 focus:border-yellow-500 outline-none text-white font-bold text-yellow-300"></div>
                 <div><label class="block text-xs font-bold mb-1 text-yellow-500">KARTA RAQAMI:</label>
                     <input type="text" id="siteCard" placeholder="8600 1234..." class="w-full p-2 bg-black border border-gray-800 focus:border-yellow-500 outline-none text-white font-bold text-yellow-300"></div>
-                <div><label class="block text-xs font-bold mb-1 text-red-400">RUXSAT KODI (PROMO KOD):</label>
-                    <input type="text" id="sitePromo" placeholder="7777" class="w-full p-2 bg-black border border-gray-800 focus:border-yellow-500 outline-none text-white font-bold text-red-300"></div>
             </div>
             <div class="flex justify-end gap-4 mt-6">
                 <button onclick="document.getElementById('settingsModal').classList.add('hidden')" class="px-6 py-3 bg-gray-800 font-bold text-white">YOPISH</button>
@@ -131,7 +118,6 @@
         </div>
     </div>
 
-    <!-- SCRIPT -->
     <script>
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playClickSound() { if(audioCtx.state==='suspended')audioCtx.resume(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.type = 'square'; osc.frequency.setValueAtTime(300, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.1); gain.gain.setValueAtTime(0.05, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1); osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + 0.1); }
@@ -160,6 +146,7 @@
 
         function openAdminLogin() { document.getElementById('loginModal').classList.remove('hidden'); document.getElementById('adminPassword').value = ''; }
         function closeAdminLogin() { document.getElementById('loginModal').classList.add('hidden'); }
+        
         function verifyPassword() {
             if(document.getElementById('adminPassword').value === '4321') {
                 document.getElementById('loginModal').classList.add('hidden'); document.getElementById('settingsModal').classList.remove('hidden');
@@ -167,79 +154,73 @@
                 document.getElementById('siteId').value = localStorage.getItem('site_admin_id') || '';
                 document.getElementById('sitePrice').value = localStorage.getItem('site_price') || '5000';
                 document.getElementById('siteCard').value = localStorage.getItem('site_card') || '8600 0000 0000 0000';
-                document.getElementById('sitePromo').value = localStorage.getItem('site_promo') || '7777';
             } else alert("❌ Parol noto'g'ri!");
         }
+        
         function saveSettings() {
             localStorage.setItem('site_bot_token', document.getElementById('siteToken').value);
             localStorage.setItem('site_admin_id', document.getElementById('siteId').value);
             localStorage.setItem('site_price', document.getElementById('sitePrice').value);
             localStorage.setItem('site_card', document.getElementById('siteCard').value);
-            localStorage.setItem('site_promo', document.getElementById('sitePromo').value);
             alert("✅ Saqlandi!"); document.getElementById('settingsModal').classList.add('hidden'); location.reload();
         }
 
-        function checkPromo() {
-            let entered = document.getElementById('promoCodeInput').value;
-            let real = localStorage.getItem('site_promo') || '7777';
-            if(entered === real) {
-                localStorage.setItem('site_ads_posted', '0');
-                alert("🎉 TASDIQLANDI! Qulf ochildi, e'lon joylashingiz mumkin.");
-                location.reload();
-            } else { alert("❌ Noto'g'ri kod! Admindan so'rang."); }
-        }
-
-        // 1. VIDEONI YUBORISH
         document.getElementById('adForm').addEventListener('submit', function(e) {
             e.preventDefault();
             let token = localStorage.getItem('site_bot_token'); let id = localStorage.getItem('site_admin_id');
-            if(!token || !id) return alert("❌ Token va Admin ID kiritilmagan!");
+            if(!token || !id) return alert("❌ Token va Admin ID kiritilmagan! (Sozlamalarga kiring)");
             let file = document.getElementById('videoFile').files[0];
             if(file.size > 100*1024*1024) return alert("❌ Hajm 100 MB dan oshmasin!");
             
-            // Username'ni chiroyli va formatsiz qilib jo'natamiz
-            let rawUser = document.getElementById('username').value.replace(/\s+/g, '').replace('@', '');
-            let cleanUser = '@' + rawUser;
-
             let btn = document.getElementById('submitBtn'); let orig = btn.innerHTML;
             btn.disabled = true; btn.innerHTML = `<div class="sniper-loader"></div> <span class="ml-2">YUKLANMOQDA...</span>`;
 
+            let rawUser = document.getElementById('username').value.trim();
+            let safeUser = rawUser.replace('@', '');
+
             let fd = new FormData(); fd.append('chat_id', id); fd.append('video', file);
-            fd.append('caption', `🌐 Saytdan E'lon!\n👤 Kimdan: ${cleanUser}\n📊 Level: ${document.getElementById('level').value}\n🔫 Qurollar: ${document.getElementById('guns').value}\n🥷 X-Suit: ${document.getElementById('xsuits').value}\n🎫 RP: ${document.getElementById('rp').value}\n🚗 Mashinalar: ${document.getElementById('cars').value}\n💵 Narx: ${document.getElementById('price').value} so'm\n📞 Tel: ${document.getElementById('phone').value}`);
-            fd.append('reply_markup', JSON.stringify({ inline_keyboard: [[{ text: "✅ TASDIQLASH (Kanalga jo'natish)", callback_data: "web_ok" }],[{ text: "❌ BEKOR QILISH", callback_data: "web_no" }]] }));
+            fd.append('caption', `🌐 SAYTDAN YANGI E'LON!\n\n📊 Level: ${document.getElementById('level').value}\n🔫 Qurollar: ${document.getElementById('guns').value}\n🥷 X-Suit: ${document.getElementById('xsuits').value}\n🎫 RP: ${document.getElementById('rp').value}\n🚗 Mashinalar: ${document.getElementById('cars').value}\n💵 Narx: ${document.getElementById('price').value} so'm\n📞 Tel: ${document.getElementById('phone').value}\n\n👤 Sotuvchi: @${safeUser}`);
+            
+            // Xato bermasligi uchun style olib tashlandi, lekin emojilar joyida!
+            fd.append('reply_markup', JSON.stringify({ 
+                inline_keyboard: [[{ text: "✅ TASDIQLASH (Kanalga jo'natish)", callback_data: "webad_ok" }],[{ text: "❌ BEKOR QILISH", callback_data: "webad_no" }]
+                ] 
+            }));
 
             fetch(`https://api.telegram.org/bot${token}/sendVideo`, { method: 'POST', body: fd })
             .then(res => res.json()).then(data => {
                 btn.disabled = false; btn.innerHTML = orig;
                 if(data.ok) {
-                    alert("✅ E'lon adminga ketdi!");
+                    alert("✅ E'lon adminga yuborildi!");
                     localStorage.setItem('site_ads_posted', '1');
                     location.reload();
                 } else alert("❌ Xatolik yuz berdi: " + data.description);
             }).catch(() => { btn.disabled = false; btn.innerHTML = orig; alert("Tarmoq xatosi!"); });
         });
 
-        // 2. TO'LOV CHEKINI YUBORISH
         document.getElementById('paymentForm').addEventListener('submit', function(e) {
             e.preventDefault();
             let token = localStorage.getItem('site_bot_token'); let id = localStorage.getItem('site_admin_id');
-            let file = document.getElementById('receiptFile').files[0]; 
-            let rawUser = document.getElementById('payUsername').value.replace(/\s+/g, '').replace('@', '');
+            let file = document.getElementById('receiptFile').files[0]; let user = document.getElementById('payUsername').value;
 
             let btn = document.getElementById('payBtn'); let orig = btn.innerHTML;
             btn.disabled = true; btn.innerHTML = `<div class="sniper-loader"></div> <span class="ml-2">YUBORILMOQDA...</span>`;
 
             let fd = new FormData(); fd.append('chat_id', id); fd.append('photo', file);
-            fd.append('caption', `💳 SAYTDAN TO'LOV CHEKI!\n\n👤 Kimdan: @${rawUser}`);
-            fd.append('reply_markup', JSON.stringify({ inline_keyboard: [[{ text: "✅ Tasdiqlash", callback_data: "web_pay_ok" }, { text: "❌ Bekor qilish", callback_data: "web_pay_no" }]] }));
+            fd.append('caption', `💳 SAYTDAN TO'LOV CHEKI!\n\n👤 Kimdan: ${user}`);
+            
+            fd.append('reply_markup', JSON.stringify({ 
+                inline_keyboard: [[{ text: "✅ TASDIQLASH", callback_data: "webpay_ok" }],[{ text: "❌ BEKOR QILISH", callback_data: "webpay_no" }]
+                ] 
+            }));
 
             fetch(`https://api.telegram.org/bot${token}/sendPhoto`, { method: 'POST', body: fd })
             .then(res => res.json()).then(data => {
                 btn.disabled = false; btn.innerHTML = orig;
                 if(data.ok) {
-                    alert("✅ Chekingiz Adminga yuborildi. Ular tekshirib, telegramingizga ruxsat kodini tashlab berishadi!");
-                    document.getElementById('paymentForm').reset();
-                    document.getElementById('receiptNameDisplay').innerText = "📸 To'lov chekini rasmga olib yuklang";
+                    alert("✅ To'lov cheki yuborildi! Endi navbatdagi e'loningizni joylashingiz mumkin.");
+                    localStorage.setItem('site_ads_posted', '0');
+                    location.reload(); 
                 } else alert("❌ Xatolik yuz berdi.");
             }).catch(() => { btn.disabled = false; btn.innerHTML = orig; alert("Tarmoq xatosi!"); });
         });
