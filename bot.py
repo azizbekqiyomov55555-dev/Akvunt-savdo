@@ -9,7 +9,8 @@ from PIL import Image, ImageDraw, ImageFont
 from aiogram import Bot, Dispatcher, F, Router
 from aiogram.types import (
     Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton,
-    BufferedInputFile, ReplyKeyboardRemove, ReplyKeyboardMarkup, KeyboardButton
+    BufferedInputFile, ReplyKeyboardRemove, ReplyKeyboardMarkup, KeyboardButton,
+    WebAppInfo
 )
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
@@ -40,6 +41,7 @@ def init_db():
         c.execute("INSERT OR IGNORE INTO settings (key, value) VALUES ('price', '50000')")
         c.execute("INSERT OR IGNORE INTO settings (key, value) VALUES ('card', '8600 0000 0000 0000 (Ism Familiya)')")
         c.execute("INSERT OR IGNORE INTO settings (key, value) VALUES ('start_msg', 'Salom {name}! Siz bu botdan PUBG Mobile akkauntingizni obzorini joylashingiz mumkin va u video kanalga joylanadi.')")
+        c.execute("INSERT OR IGNORE INTO settings (key, value) VALUES ('site_url', 'https://azizbekqiyomov55555-dev.github.io/Test-bot-')")
         conn.commit()
 
 def db_query(query, params=(), fetchone=False, fetchall=False):
@@ -136,7 +138,9 @@ async def start_cmd(message: Message, state: FSMContext):
         return
 
     start_text = get_setting('start_msg').replace("{name}", message.from_user.full_name)
-    await message.answer(start_text, reply_markup=get_main_menu())
+    # Foydalanuvchiga ID sini ko'rsatish (saytda to'lov uchun kerak)
+    id_text = f"\n\n🆔 Sizning Telegram ID: <code>{message.from_user.id}</code>\n(To'lov sahifasida shu ID ni kiriting)"
+    await message.answer(start_text + id_text, reply_markup=get_main_menu(), parse_mode="HTML")
 
 @router.callback_query(F.data == "check_sub")
 async def check_sub_cb(call: CallbackQuery):
@@ -362,6 +366,171 @@ async def reject_ad(call: CallbackQuery):
         await bot.send_message(ad[0], "❌ E'loningiz admin tomonidan rad etildi.", reply_markup=get_main_menu())
         await call.message.edit_caption(caption=call.message.caption + "\n\n❌ BEKOR QILINGAN")
 
+# ================== SAYTDAN KELGAN E'LON CALLBACKLAR ==================
+@router.callback_query(F.data == "webad_ok")
+async def approve_web_ad(call: CallbackQuery):
+    if call.from_user.id != ADMIN_ID:
+        await call.answer("Sizda ruxsat yo'q!", show_alert=True)
+        return
+
+    me = await bot.get_me()
+    msg = call.message
+
+    # Xabar video yoki boshqa media bo'lishi mumkin
+    video_id = None
+    if msg.video:
+        video_id = msg.video.file_id
+    elif msg.document:
+        video_id = msg.document.file_id
+
+    caption = msg.caption or msg.text or ""
+
+    # Kanalga joylanadigan tugmalar
+    btn = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(
+            text="📢 Reklama berish",
+            url=f"https://t.me/{me.username}?start=ad",
+            style="primary"
+        )]
+    ])
+
+    try:
+        if video_id:
+            await bot.send_video(MAIN_CHANNEL_ID, video=video_id, caption=caption, reply_markup=btn)
+        else:
+            await bot.send_message(MAIN_CHANNEL_ID, text=caption, reply_markup=btn)
+
+        await call.message.edit_caption(
+            caption=caption + "\n\n✅ KANALGA JOYLANDI",
+            reply_markup=None
+        )
+        await call.answer("✅ Kanalga joylandi!", show_alert=True)
+    except Exception as e:
+        await call.answer(f"❌ Xatolik: {e}", show_alert=True)
+
+@router.callback_query(F.data == "webad_no")
+async def reject_web_ad(call: CallbackQuery):
+    if call.from_user.id != ADMIN_ID:
+        await call.answer("Sizda ruxsat yo'q!", show_alert=True)
+        return
+    caption = call.message.caption or call.message.text or ""
+    await call.message.edit_caption(
+        caption=caption + "\n\n❌ BEKOR QILINGAN",
+        reply_markup=None
+    )
+    await call.answer("❌ E'lon bekor qilindi.", show_alert=True)
+
+# ================== SAYTDAN KELGAN TO'LOV CALLBACKLAR ==================
+@router.callback_query(F.data.startswith("webpay_ok"))
+async def approve_web_pay(call: CallbackQuery):
+    if call.from_user.id != ADMIN_ID:
+        await call.answer("Sizda ruxsat yo'q!", show_alert=True)
+        return
+
+    caption = call.message.caption or ""
+
+    # callback_data dan tg_id olish: "webpay_ok_123456789"
+    parts = call.data.split("_")
+    tg_id = parts[-1] if len(parts) > 2 and parts[-1].isdigit() else None
+
+    # Captiondan username ajratib olish (zaxira)
+    username = None
+    for line in caption.split("\n"):
+        if "Kimdan:" in line:
+            p = line.split("Kimdan:")
+            if len(p) > 1:
+                username = p[1].strip().replace("@", "")
+            break
+
+    # 6 xonali kod yaratish
+    import random, time
+    code = str(random.randint(100000, 999999))
+
+    # Kodni DB ga saqlash
+    db_query("CREATE TABLE IF NOT EXISTS unlock_codes (code TEXT PRIMARY KEY, used INTEGER DEFAULT 0, created INTEGER)")
+    db_query("INSERT OR REPLACE INTO unlock_codes (code, used, created) VALUES (?, 0, ?)", (code, int(time.time())))
+
+    # Sayt URL ni olish
+    site_url = get_setting('site_url') or ""
+
+    # Foydalanuvchiga kod yuborish — tg_id orqali
+    sent = False
+    send_to = tg_id or (f"@{username}" if username else None)
+    if send_to:
+        try:
+            # Agar site_url bo'lsa — tugma bilan havola, yo'qsa faqat kod
+            if site_url:
+                unlock_url = f"{site_url}?code={code}"
+                markup = InlineKeyboardMarkup(inline_keyboard=[[
+                    InlineKeyboardButton(
+                        text="📝 shu yerni bosib kodni kiriting",
+                        web_app=WebAppInfo(url=unlock_url)
+                    )
+                ]])
+                await bot.send_message(
+                    send_to,
+                    f"✅ <b>To'lovingiz tasdiqlandi!</b>\n\n"
+                    f"Quyidagi tugmani bosing — sayt ochiladi va e'lon formasi avtomatik ochiladi:\n\n"
+                    f"🔑 Kod: <code>{code}</code>\n"
+                    f"(Tugma ishlamasa kodni qo'lda kiriting)",
+                    parse_mode="HTML",
+                    reply_markup=markup
+                )
+            else:
+                await bot.send_message(
+                    send_to,
+                    f"✅ <b>To'lovingiz tasdiqlandi!</b>\n\n"
+                    f"Saytga kiring va quyidagi kodni kiriting:\n\n"
+                    f"🔑 <code>{code}</code>\n\n"
+                    f"⚠️ Kod faqat <b>1 marta</b> ishlaydi!",
+                    parse_mode="HTML"
+                )
+            sent = True
+        except Exception:
+            pass
+
+    note = f"\n\n✅ TO'LOV TASDIQLANDI\n🔑 Kod: {code}"
+    note += f"\n📨 yuborildi" if sent else f"\n⚠️ Yuborib bo'lmadi — kodni qo'lda yuboring: {code}"
+
+    await call.message.edit_caption(caption=caption + note, reply_markup=None)
+    await call.answer(f"✅ Kod: {code}" + (" — yuborildi" if sent else " — qo'lda yuboring!"), show_alert=True)
+
+@router.callback_query(F.data.startswith("webpay_no"))
+async def reject_web_pay(call: CallbackQuery):
+    if call.from_user.id != ADMIN_ID:
+        await call.answer("Sizda ruxsat yo'q!", show_alert=True)
+        return
+    caption = call.message.caption or ""
+    await call.message.edit_caption(caption=caption + "\n\n❌ TO'LOV BEKOR QILINDI", reply_markup=None)
+    await call.answer("❌ To'lov bekor qilindi.", show_alert=True)
+
+# ================== SAYTDAN KOD TEKSHIRISH ==================
+# Sayt Telegram Bot API sendMessage orqali botga /check_XXXXXX yuboradi
+# Bot kodni tekshirib "valid", "invalid" yoki "used" deb javob beradi
+@router.message(F.text.regexp(r'^/check_\d{6}$'))
+async def check_site_code(message: Message):
+    code = message.text.split("_")[1]
+    row = db_query("SELECT used FROM unlock_codes WHERE code=?", (code,), fetchone=True)
+    if not row:
+        await message.answer("invalid")
+    elif row[0] == 1:
+        await message.answer("used")
+    else:
+        db_query("UPDATE unlock_codes SET used=1 WHERE code=?", (code,))
+        await message.answer("valid")
+
+# ================== SAYT URL SOZLASH ==================
+@router.message(Command("setsite"), F.from_user.id == ADMIN_ID)
+async def set_site_url(message: Message):
+    parts = message.text.split(maxsplit=1)
+    if len(parts) < 2:
+        current = get_setting('site_url') or "Kiritilmagan"
+        await message.answer(f"Hozirgi sayt URL: {current}\n\nO'zgartirish:\n/setsite https://sizning-sayt.com")
+        return
+    url = parts[1].strip().rstrip('/')
+    db_query("INSERT OR REPLACE INTO settings (key, value) VALUES ('site_url', ?)", (url,))
+    await message.answer(f"✅ Sayt URL saqlandi:\n{url}\n\nEndi foydalanuvchilarga kod bilan birga havola ham yuboriladi.")
+
 # ================== ADMIN JAVOB CALLBACKLAR ==================
 @router.callback_query(F.data.startswith("reply_"))
 async def reply_support_cb(call: CallbackQuery, state: FSMContext):
@@ -525,8 +694,10 @@ async def send_stats_img(call: CallbackQuery):
 
 # ================== ASOSIY ISHGA TUSHIRISH ==================
 async def main():
+    db_query("CREATE TABLE IF NOT EXISTS unlock_tokens (token TEXT PRIMARY KEY, used INTEGER DEFAULT 0, created INTEGER)")
+
     dp.include_router(router)
-    print("Bot ishga tushdi...")
+    print("✅ Bot ishga tushdi...")
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
