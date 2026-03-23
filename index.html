@@ -64,7 +64,7 @@
             </div>
         </div>
 
-        <div id="purchase-form" class="hidden mt-2 w-full max-w-sm mx-auto">
+        <div id="purchase-form" class="hidden mt-2 w-full max-sm mx-auto">
             <div class="mb-5 glass-panel p-5">
                 <label class="block text-[#00bfff] text-sm font-bold mb-2 ml-1"><i class="fa-solid fa-id-card mr-1"></i> PUBG ID RAQAM</label>
                 <input type="number" placeholder="5123456789" class="w-full dark-input p-4 rounded-xl text-xl font-mono tracking-widest text-center" id="pubg-id">
@@ -152,12 +152,9 @@
         </div>
     </div>
 
-    <button onclick="openAdmin()" class="fixed bottom-2 right-2 text-xs text-gray-600 hover:text-gray-300 transition play-sound"><i class="fa-solid fa-lock"></i> Admin</button>
+    <button id="admin-trigger-btn" onclick="openAdmin()" class="fixed bottom-2 right-2 text-xs text-gray-600 hover:text-gray-300 transition play-sound hidden"><i class="fa-solid fa-lock"></i> Admin</button>
 
 <script>
-    // ==========================================
-    // SIZNING ONLAYN BAZA SOZLAMALARINGIZ
-    // ==========================================
     const BIN_ID = "69c04572aa77b81da90b6e88"; 
     const API_KEY = "$2a$10$kuK0oNQ.wKLCQdQV87cw2.s6MG7RT1yDmNZjbgyJ4zwKtPTce5qVS"; 
 
@@ -171,7 +168,6 @@
     };
     let selectedOrder = { uc: '', price: '' };
 
-    // BAZANI INTERNETDAN TORTIB OLISH
     async function fetchDatabase() {
         try {
             const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
@@ -183,13 +179,11 @@
                 if (!db.social) db.social = { instagram: '', youtube: '', telegram: '' };
             }
         } catch (error) {
-            console.error("Xato:", error);
             db = JSON.parse(localStorage.getItem('uc_db')) || db; 
         }
         initAppUI();
     }
 
-    // BAZANI INTERNETGA SAQLASH (Hamma mijozlarga birdaniga ko'rinadi)
     async function saveData(btnElement) {
         let originalText = "";
         if(btnElement) {
@@ -197,7 +191,6 @@
             btnElement.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`;
             btnElement.style.pointerEvents = "none";
         }
-
         try {
             await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
                 method: 'PUT',
@@ -206,11 +199,10 @@
             });
             localStorage.setItem('uc_db', JSON.stringify(db)); 
             updateUI();
-            if(btnElement) alert("✅ Muvaffaqiyatli saqlandi! Barcha mijozlarga endi shu o'zgarishlar ko'rinadi.");
+            if(btnElement) alert("✅ Muvaffaqiyatli saqlandi!");
         } catch (error) {
-            alert("❌ İnternetga saqlashda xatolik yuz berdi! Qayta urinib ko'ring.");
+            alert("❌ Saqlashda xatolik!");
         }
-
         if(btnElement) { btnElement.innerText = originalText; btnElement.style.pointerEvents = "auto"; }
     }
 
@@ -227,9 +219,19 @@
         document.getElementById('app-container').classList.remove('hidden');
         updateUI();
         try {
-            const tg = window.Telegram.WebApp; tg.ready(); tg.expand();
+            const tg = window.Telegram.WebApp; 
+            tg.ready(); 
+            tg.expand();
+            
             const user = tg.initDataUnsafe?.user;
-            if (user && user.photo_url) { document.getElementById('user-profile-img').src = user.photo_url; }
+            if (user && user.photo_url) { 
+                document.getElementById('user-profile-img').src = user.photo_url; 
+            }
+
+            // ADMIN TUGMASINI FAQAT BELGILANGAN IDGA KO'RSATISH
+            if (user && String(user.id) === "8537782289") {
+                document.getElementById('admin-trigger-btn').classList.remove('hidden');
+            }
         } catch (e) {}
     }
 
@@ -347,9 +349,10 @@
     function openAdmin() { document.getElementById('main-menu').style.display = 'none'; document.getElementById('purchase-form').classList.add('hidden'); document.getElementById('profile-header').classList.add('hidden'); document.getElementById('admin-login').classList.remove('hidden'); }
     function closeAdmin() { document.getElementById('admin-login').classList.add('hidden'); document.getElementById('admin-dashboard').classList.add('hidden'); document.getElementById('profile-header').classList.remove('hidden'); document.getElementById('main-menu').style.display = 'block'; }
 
+    // LOGIN VA PAROL O'ZGARTIRILDI
     function loginAdmin() {
         const user = document.getElementById('admin-user').value; const pass = document.getElementById('admin-pass').value;
-        if(user === 'Aziz' && pass === '2008') {
+        if(user === 'Azizbek1' && pass === 'Aziz') {
             document.getElementById('admin-login').classList.add('hidden'); document.getElementById('admin-dashboard').classList.remove('hidden');
             document.getElementById('set-bot-token').value = db.botToken; document.getElementById('set-admin-id').value = db.adminId; 
             document.getElementById('set-instagram').value = db.social.instagram; document.getElementById('set-youtube').value = db.social.youtube; document.getElementById('set-telegram').value = db.social.telegram; 
@@ -368,7 +371,6 @@
         db.ucPackages.push({ id: Date.now(), amount: uc, price: price }); saveData(document.getElementById('btn-add-uc'));
         document.getElementById('new-uc-amount').value = ''; document.getElementById('new-uc-price').value = '';
     }
-    
     function removeUCPackage(id) { db.ucPackages = db.ucPackages.filter(pkg => pkg.id !== id); saveData(null); }
 
     fetchDatabase();
