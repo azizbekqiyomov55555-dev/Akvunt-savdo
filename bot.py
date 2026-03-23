@@ -18,7 +18,7 @@ from aiogram.filters import CommandStart, Command
 
 # ================== SOZLAMALAR ==================
 BOT_TOKEN = "8632541339:AAHltUEVgFkRxjYmzfJBuORXqb_D21zptlc"
-ADMIN_ID = 8537782289
+ADMIN_ID = 7973934849
 MAIN_CHANNEL_ID = "@Azizbekl2026"
 # ================================================
 
