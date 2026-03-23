@@ -20,8 +20,8 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.filters import CommandStart, Command
 
 # ================== SOZLAMALAR ==================
-BOT_TOKEN = os.getenv("BOT_TOKEN", "8674741228:AAGHzR8sfFTAW9N6BpYuVWusz_cIsxAqz_w")
-ADMIN_ID = int(os.getenv("ADMIN_ID", "8537782289"))
+BOT_TOKEN = os.getenv("BOT_TOKEN", "8632541339:AAHltUEVgFkRxjYmzfJBuORXqb_D21zptlc")
+ADMIN_ID = int(os.getenv("ADMIN_ID", "7973934849"))
 MAIN_CHANNEL_ID = os.getenv("MAIN_CHANNEL_ID", "@Azizbekl2026")
 DATABASE_URL = os.getenv("DATABASE_URL", "")  # Railway PostgreSQL URL
 # ================================================
