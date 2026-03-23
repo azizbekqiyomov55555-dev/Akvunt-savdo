@@ -1095,7 +1095,8 @@ async def get_phone(message: Message, state: FSMContext):
             f"💰 Narxi: {data['price']} so'm\n"
             f"📞 Tel: {message.text}\n\n"
             f"➖➖➖➖➖➖➖➖➖➖\n"
-            f"👨‍💻 Admin: "Akvunt sotib olishda sotishda" oʻrtga turib berish @Azizku_2008\n"
+            f"👨‍💻 Admin: Akvunt sotib olishda sotishda oʻrtga turib berish
+            @Azizku_2008\n"
             f"🤖 Botimiz: @{me.username}")
 
     ad_id = db_query("INSERT INTO ads (user_id, video_id, text) VALUES (?, ?, ?)",
