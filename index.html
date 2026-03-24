@@ -38,8 +38,6 @@
 </head>
 <body class="px-4 w-full flex flex-col items-center">
 
-    <audio id="clickSound" src="https://actions.google.com/sounds/v1/water/water_drop.ogg"></audio>
-
     <div id="loader">
         <div class="spinner"></div>
         <p class="mt-4 text-[#00f2fe] font-bold tracking-widest animate-pulse">BAZA YUKLANMOQDA...</p>
@@ -193,7 +191,7 @@
 
 <script>
     // ==========================================
-    // ONLAYN BAZA SOZLAMALARI
+    // SIZNING ONLAYN BAZA SOZLAMALARINGIZ
     // ==========================================
     const BIN_ID = "69c1ae3bb7ec241ddc976618"; 
     const API_KEY = "$2a$10$VHoMm66q6eKmUSI7G1d3Iun11XU1eac.BVRVrPVvSG8.ZCYECPO6O"; 
@@ -208,6 +206,40 @@
 
     let currentCategory = 'uc'; 
     let selectedOrder = { item: '', price: '' };
+
+    // ==========================================
+    // 100% ISHLAYDIGAN "POP" OVOZI (Web Audio API)
+    // ==========================================
+    function playClickSound() {
+        try {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!window.audioCtx) { window.audioCtx = new AudioContext(); }
+            if (window.audioCtx.state === 'suspended') { window.audioCtx.resume(); }
+            
+            const osc = window.audioCtx.createOscillator();
+            const gain = window.audioCtx.createGain();
+            
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(600, window.audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(100, window.audioCtx.currentTime + 0.05);
+            
+            gain.gain.setValueAtTime(0.3, window.audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, window.audioCtx.currentTime + 0.05);
+            
+            osc.connect(gain);
+            gain.connect(window.audioCtx.destination);
+            
+            osc.start();
+            osc.stop(window.audioCtx.currentTime + 0.05);
+        } catch(e){ console.log("Ovoz tizimi ishlamadi:", e); }
+    }
+
+    document.addEventListener('click', (e) => { 
+        if(e.target.closest('.play-sound')) { 
+            playClickSound(); // Tugma bosilganda darhol ovoz chiqadi
+        } 
+    });
+
 
     async function fetchDatabase() {
         try {
@@ -273,8 +305,7 @@
         return parts.length ? parts.join(' ') : value;
     }
     function formatInputCard(element) { element.value = formatCardNumber(element.value); }
-    const dropSound = document.getElementById('clickSound');
-    document.addEventListener('click', (e) => { if(e.target.closest('.play-sound')) { dropSound.currentTime = 0; dropSound.play().catch(()=>{}); } });
+    
 
     function openForm(category) {
         currentCategory = category;
